@@ -156,10 +156,12 @@ export default class Query<TData = any, TVariables = OperationVariables> extends
       fetchPolicy = 'cache-first'; // ignore force fetch in SSR;
     }
 
-    const observable = this.client.watchQuery({
-      ...opts,
-      fetchPolicy,
-    });
+    const watchQueryOpts = { ...opts };
+    if (fetchPolicy) {
+      watchQueryOpts.fetchPolicy = fetchPolicy;
+    }
+
+    const observable = this.client.watchQuery(watchQueryOpts);
 
     // Register the SSR observable, so it can be re-used once the value comes back.
     if (this.context && this.context.renderPromises) {
